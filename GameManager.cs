@@ -101,7 +101,7 @@ namespace AutomationTest_Code
                         playerWallet.CreditBalance(result.WinAmount);
 
                     // was there a bonus?
-                    result.HasBonus = IsQualifiedForBonus(player, betAmount);
+                    result.HasBonus = IsQualifiedForBonus(betAmount, result.WinAmount);
                         
                     // add the round result to the saved results collection
                     AutoPlayedRounds.Add(result);
@@ -127,9 +127,14 @@ namespace AutomationTest_Code
         /// iii.Player’s total sum of wins is equal the half of the total sum of bet amounts - calculate it
         /// </summary>
         /// <returns></returns>
-        private bool IsQualifiedForBonus(Player player, double betAmount)
+        private bool IsQualifiedForBonus(double betAmount, double winAmount)
         {
-            return true;
+            var winsCount = AutoPlayedRounds.Where(r => r.IsWin).ToList().Count;
+            var totalSumOfBetAmounts = AutoPlayedRounds.Count * betAmount;
+            var totalSumOfWinsAmount = winsCount * winAmount;
+            return winsCount > 10
+                && betAmount > winAmount
+                && totalSumOfWinsAmount == totalSumOfBetAmounts / 2;
         }
 
         /// <summary>
